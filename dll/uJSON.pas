@@ -19,11 +19,11 @@
 }
 (*
 
-  @abstract( Contém todas as classes para manipular o formato JSON. )
+  @abstract( Contï¿½m todas as classes para manipular o formato JSON. )
 
-  As principais classes são :  TJSONObject,  TJSONArray .
+  As principais classes sï¿½o :  TJSONObject,  TJSONArray .
 
-  OBS: A unit uJSON foi adaptada de uma implementação para json em Java ver
+  OBS: A unit uJSON foi adaptada de uma implementaï¿½ï¿½o para json em Java ver
   http://www.json.org .
 
   JSON =  JavaScript Object Notation
@@ -55,20 +55,20 @@ uses
 
 type
     { @abstract(Classe pai de todas as classes em uJSON , resolve o problema de
-      impedância entre a classe java Object e a classe delphi TObject)
+      impedï¿½ncia entre a classe java Object e a classe delphi TObject)
     }
   TZAbstractObject = class
-      { retorna true se value é igual ao objeto}
+      { retorna true se value ï¿½ igual ao objeto}
     function equals(const Value: TZAbstractObject): Boolean; virtual;
-      { código hash do objeto , usa-se o endereço de memória}
+      { cï¿½digo hash do objeto , usa-se o endereï¿½o de memï¿½ria}
     function hash: LongInt;
       { clona o objeto
        @return ( um TZAbstractObject )}
     function Clone: TZAbstractObject; virtual;
-      {retorna a representação com string do objeto
+      {retorna a representaï¿½ï¿½o com string do objeto
        @return (uma string)}
     function toString: string; virtual;
-      {retorna true se o parâmetro Value é uma instância de TZAbstractObject }
+      {retorna true se o parï¿½metro Value ï¿½ uma instï¿½ncia de TZAbstractObject }
     function instanceOf(const Value: TZAbstractObject): Boolean;
   end;
 
@@ -87,7 +87,7 @@ type
 
   NullPointerException = class(Exception)
   end;
-    { @abstract(as features não implementadas geram esta exception) }
+    { @abstract(as features nï¿½o implementadas geram esta exception) }
 
   NotImplmentedFeature = class(Exception)
   end;
@@ -108,7 +108,7 @@ type
   end;
 
     (**
-      @abstract(Responsável por auxiliar na análise Léxica de uma string que representa um JSON.)
+      @abstract(Responsï¿½vel por auxiliar na anï¿½lise Lï¿½xica de uma string que representa um JSON.)
     *)
   JSONTokener = class(TZAbstractObject)
   public
@@ -435,7 +435,7 @@ var
 implementation
 
 const
-  CROTINA_NAO_IMPLEMENTADA: string = 'Rotina Não Implementada';
+  CROTINA_NAO_IMPLEMENTADA: string = 'Rotina Nï¿½o Implementada';
 
 procedure newNotImplmentedFeature();
 begin
@@ -905,7 +905,7 @@ begin
       end;
     end;
     try
-      result := _Integer.create(s);
+      result := _Double.create(s);
       exit;
     except
       on e: Exception do
@@ -915,7 +915,7 @@ begin
     end;
 
     try
-      result := _Double.create(s);
+      result := _Integer.create(s);
       exit;
     except
       on e: Exception do
@@ -983,7 +983,7 @@ end;
      *)
 function JSONTokener.syntaxError(_message: string): ParseException;
 begin
-  result := ParseException.create(_message + toString() + ' próximo a : ' + copy(toString(), self.myIndex, 10), self.myIndex);
+  result := ParseException.create(_message + toString() + ' prï¿½ximo a : ' + copy(toString(), self.myIndex, 10), self.myIndex);
 end;
 
 

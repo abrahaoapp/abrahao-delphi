@@ -220,9 +220,7 @@ uses
     Result := inherited Add(AObject);
   end;
 
-
   //BILL
-
   type
     TBillItem = class
       total               : Double;
@@ -264,9 +262,7 @@ uses
     FreeAndNil(items);
   end;
 
-
   //EVENT
-
   type
     TEventTheCheck = class
       table               : PChar;
@@ -409,10 +405,6 @@ uses
     Result := inherited Add(AObject);
   end;
 
-
-
-
-
   //TABLE
   type
     TTable = class
@@ -468,10 +460,6 @@ uses
   begin
     Result := inherited Add(AObject);
   end;
-
-
-
-
 
   //CARD
   type
@@ -529,11 +517,7 @@ uses
     Result := inherited Add(AObject);
   end;
 
-
-
-
-
-   //USER
+  //USER
   type
     TUser = class
       code                : Integer;
@@ -589,10 +573,6 @@ uses
     Result := inherited Add(AObject);
   end;
 
-
-
-
-
   //ITEM
   type
     TItemResult = class
@@ -603,13 +583,9 @@ uses
       count               : Integer;
   end;
 
-
   const
     apiUrl      : String = 'https://developers.abrahao.com.br/api/v1';
     apiVersion  : String = 'v1';
-
-
-
 
 
 function getJson(param: TRequestParam; method: String; api: String; postJson: String):TJSONObject;
@@ -680,11 +656,6 @@ begin
   end;
 
 end;
-
-
-
-
-
 
 //PRODUCT
 function createProduct(param: TRequestParam; product: TProduct): TProductResult;stdcall;
@@ -817,9 +788,6 @@ begin
   Result := simpleResult;
 end;
 
-
-
-
 //ORDER
 function getAllOrders(param: TRequestParam): TOrderResult;stdcall;
 var
@@ -877,7 +845,7 @@ begin
            orderItemOption.price := jsonObj.getJSONArray('data').getJSONObject(x).getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getDouble('price');
 
            for w := 0 to jsonObj.getJSONArray('data').getJSONObject(x).getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getJSONArray('notes').length-1 do
-              orderItem.notes.Add(jsonObj.getJSONArray('data').getJSONObject(x).getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getJSONArray('notes').getString(w));
+              orderItemOption.notes.Add(jsonObj.getJSONArray('data').getJSONObject(x).getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getJSONArray('notes').getString(w));
 
            orderItemOption.extraFields := PChar(jsonObj.getJSONArray('data').getJSONObject(x).getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getString('extra_fields'));
            orderItem.options.Add(orderItemOption);
@@ -909,8 +877,6 @@ begin
 
   Result := simpleResult;
 end;
-
-
 
 //EVENT
 function getAllEvents(param: TRequestParam): TEventResult;stdcall;
@@ -992,7 +958,6 @@ begin
   Result := simpleResult;
 end;
 
-
 //TABLE ACTION
 function closeTable(param: TRequestParam; code: Integer ): TSimpleResult;stdcall;
 var
@@ -1062,10 +1027,11 @@ begin
   Result := simpleResult;
 end;
 
-function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderProduct): TItemResult;stdcall;
+function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderItem): TItemResult;stdcall;
 var
   itemResult: TItemResult;
-  jsonObj: TJSONObject;
+  jsonObj, jsonOptionObj: TJSONObject;
+  jsonArray: TJSONArray;
   orderItem: TOrderItem;
   orderItemOption: TOrderItemOption;
   x, y: Integer;
@@ -1075,6 +1041,21 @@ begin
   jsonObj.put('name', product.name);
   jsonObj.put('price', product.price);
   jsonObj.put('quantity', product.quantity);
+
+  if (product.options.Count > 0) then
+  begin
+    jsonArray := TJSONArray.create;
+    for x := 0 to product.options.Count-1 do
+    begin
+      jsonOptionObj := TJSONObject.create;
+      jsonOptionObj.put('code', product.options.Items[x].code);
+      jsonOptionObj.put('name', product.options.Items[x].name);
+      jsonOptionObj.put('price', product.options.Items[x].price);
+      jsonOptionObj.put('quantity', product.options.Items[x].quantity);
+      jsonArray.put(jsonOptionObj);
+    end;
+    jsonObj.put('options', jsonArray);
+  end;
 
   jsonObj := getJson(param, 'POST', 'table/' + IntToStr(codeTable) + '/item', jsonObj.toString);
 
@@ -1110,7 +1091,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1169,7 +1150,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1247,7 +1228,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1302,7 +1283,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1358,7 +1339,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1418,7 +1399,7 @@ begin
            orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getDouble('price');
 
            for w := 0 to jsonObj.getJSONObject('data').getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getJSONArray('notes').length-1 do
-              orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getJSONArray('notes').getString(w));
+              orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getJSONArray('notes').getString(w));
 
            orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('items').getJSONObject(y).getJSONArray('options').getJSONObject(z).getString('extra_fields'));
            orderItem.options.Add(orderItemOption);
@@ -1511,10 +1492,11 @@ begin
   Result := simpleResult;
 end;
 
-function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderProduct): TItemResult;stdcall;
+function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderItem): TItemResult;stdcall;
 var
   itemResult: TItemResult;
-  jsonObj: TJSONObject;
+  jsonObj, jsonOptionObj: TJSONObject;
+  jsonArray: TJSONArray;
   orderItem: TOrderItem;
   orderItemOption: TOrderItemOption;
   x, y: Integer;
@@ -1524,6 +1506,21 @@ begin
   jsonObj.put('name', product.name);
   jsonObj.put('price', product.price);
   jsonObj.put('quantity', product.quantity);
+
+  if (product.options.Count > 0) then
+  begin
+    jsonArray := TJSONArray.create;
+    for x := 0 to product.options.Count-1 do
+    begin
+      jsonOptionObj := TJSONObject.create;
+      jsonOptionObj.put('code', product.options.Items[x].code);
+      jsonOptionObj.put('name', product.options.Items[x].name);
+      jsonOptionObj.put('price', product.options.Items[x].price);
+      jsonOptionObj.put('quantity', product.options.Items[x].quantity);
+      jsonArray.put(jsonOptionObj);
+    end;
+    jsonObj.put('options', jsonArray);
+  end;
 
   jsonObj := getJson(param, 'POST', 'card/' + IntToStr(codeCard) + '/item', jsonObj.toString);
 
@@ -1559,7 +1556,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1618,7 +1615,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1697,7 +1694,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONObject('new_item').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1752,7 +1749,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1763,7 +1760,6 @@ begin
 
   Result := itemResult;
 end;
-
 
 function cancelCardItemQtd(param: TRequestParam; code: Integer; idItem: String; quantity: Integer ): TItemResult; stdcall;
 var
@@ -1807,7 +1803,7 @@ begin
       orderItemOption.price := jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getDouble('price');
 
       for y := 0 to jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').length-1 do
-        orderItem.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
+        orderItemOption.notes.Add(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getJSONArray('notes').getString(y));
 
       orderItemOption.extraFields := PChar(jsonObj.getJSONObject('data').getJSONArray('options').getJSONObject(x).getString('extra_fields'));
       orderItem.options.Add(orderItemOption);
@@ -1818,11 +1814,6 @@ begin
 
   Result := itemResult;
 end;
-
-
-
-
-
 
 //TABLE
 function getAllTables(param: TRequestParam): TTableResult;stdcall;
@@ -1904,7 +1895,6 @@ var
   jsonArray: TJSONArray;
   count: Integer;
 begin
-
   jsonArray := TJSONArray.create;
   for count := 0 to tables.Count-1 do
   begin
@@ -1983,10 +1973,6 @@ begin
 
   Result := simpleResult;
 end;
-
-
-
-
 
 //CARD
 function getAllCards(param: TRequestParam): TCardResult;stdcall;
@@ -2068,7 +2054,6 @@ var
   jsonArray: TJSONArray;
   count: Integer;
 begin
-
   jsonArray := TJSONArray.create;
   for count := 0 to cards.Count-1 do
   begin
@@ -2146,10 +2131,6 @@ begin
 
   Result := simpleResult;
 end;
-
-
-
-
 
 //USER
 function getAllUsers(param: TRequestParam): TUserResult;stdcall;
@@ -2234,7 +2215,6 @@ var
   jsonArray: TJSONArray;
   count: Integer;
 begin
-
   jsonArray := TJSONArray.create;
   for count := 0 to users.Count-1 do
   begin
@@ -2318,12 +2298,6 @@ begin
 
   Result := simpleResult;
 end;
-
-
-
-
-
-
 
 exports
 

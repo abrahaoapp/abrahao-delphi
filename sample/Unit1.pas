@@ -397,6 +397,7 @@ var
   billResult : TBillResult;
   order : TOrder;
   orderItem : TOrderItem;
+  orderItemOption : TOrderItemOption;
   x, y: Integer;
 begin
   billResult := getTableBill(apiParameter, StrToInt(edtParametro.Text));
@@ -413,6 +414,16 @@ begin
         memo1.Lines.Add('  '+orderItem.name);
         memo1.Lines.Add('  '+IntToStr(orderItem.quantity));
         memo1.Lines.Add('  '+FloatToStr(orderItem.price));
+        for y := 0 to orderItem.options.Count - 1 do
+        begin
+          orderItemOption := orderItem.options.Items[y];
+          memo1.Lines.Add('    '+orderItemOption.id);
+          memo1.Lines.Add('    '+orderItemOption.code);
+          memo1.Lines.Add('    '+orderItemOption.name);
+          memo1.Lines.Add('    '+IntToStr(orderItemOption.quantity));
+          memo1.Lines.Add('    '+FloatToStr(orderItemOption.price));
+          memo1.Lines.Add('    ');
+        end;
         memo1.Lines.Add('  ');
     end;
   end else begin
@@ -579,7 +590,7 @@ var
 begin
   table := TTable.Create;
   table.code := 7;
-  table.name := 'Mesa 7 - Área externa';
+  table.name := 'Mesa 7 - ï¿½rea externa';
   table.servicePercentage := 10.00;
 
   tableResult := updateTable(apiParameter, table);
@@ -867,16 +878,25 @@ end;
 procedure TForm1.btnCreateTableItemClick(Sender: TObject);
 var
   itemResult : TItemResult;
-  product : TOrderProduct;
+  product : TOrderItem;
+  productOption: TOrderItemOption;
   item: TOrderItem;
 begin
-  product := TOrderProduct.Create;
+  product := TOrderItem.Create;
   product.code := '1062';
-  product.name := 'Chopp da Casa 600ml';
-  product.price := 6.50;
+  product.name := 'Hambuguer';
+  product.price := 33.50;
   product.quantity := 1;
 
-  itemResult := createTableItem(apiParameter, 2, product);
+  productOption := TOrderItemOption.Create;
+  productOption.code := '1063';
+  productOption.name := 'Adicional de bacon';
+  productOption.price := 9.99;
+  productOption.quantity := 1;
+
+  product.options.Add(productOption);
+
+  itemResult := createTableItem(apiParameter, StrToInt(edtParametro.Text), product);
 
   memo1.Lines.Clear;
   if (itemResult.success) then
@@ -963,16 +983,25 @@ end;
 procedure TForm1.btnCreateCardItemClick(Sender: TObject);
 var
   itemResult : TItemResult;
-  product : TOrderProduct;
+  product : TOrderItem;
+  productOption: TOrderItemOption;
   item: TOrderItem;
 begin
-  product := TOrderProduct.Create;
-  product.code := '106';
-  product.name := 'Chopp da Casa 600ml';
-  product.price := 6.50;
+  product := TOrderItem.Create;
+  product.code := '1062';
+  product.name := 'Hambuguer';
+  product.price := 33.50;
   product.quantity := 1;
 
-  itemResult := createCardItem(apiParameter, 1, product);
+  productOption := TOrderItemOption.Create;
+  productOption.code := '1063';
+  productOption.name := 'Adicional de bacon';
+  productOption.price := 9.99;
+  productOption.quantity := 1;
+
+  product.options.Add(productOption);
+
+  itemResult := createCardItem(apiParameter, StrToInt(edtParametro.text), product);
 
   memo1.Lines.Clear;
   if (itemResult.success) then
@@ -1128,6 +1157,7 @@ var
   billResult : TBillResult;
   order : TOrder;
   orderItem : TOrderItem;
+  orderItemOption : TOrderItemOption;
   x, y: Integer;
 begin
   billResult := getCardBill(apiParameter, StrToInt(edtParametro.Text));
@@ -1144,6 +1174,16 @@ begin
         memo1.Lines.Add('  '+orderItem.name);
         memo1.Lines.Add('  '+IntToStr(orderItem.quantity));
         memo1.Lines.Add('  '+FloatToStr(orderItem.price));
+        for y := 0 to orderItem.options.Count - 1 do
+        begin
+          orderItemOption := orderItem.options.Items[y];
+          memo1.Lines.Add('    '+orderItemOption.id);
+          memo1.Lines.Add('    '+orderItemOption.code);
+          memo1.Lines.Add('    '+orderItemOption.name);
+          memo1.Lines.Add('    '+IntToStr(orderItemOption.quantity));
+          memo1.Lines.Add('    '+FloatToStr(orderItemOption.price));
+          memo1.Lines.Add('    ');
+        end;
         memo1.Lines.Add('  ');
     end;
   end else begin

@@ -25,7 +25,6 @@ uses
   end;
 
   //ORDER
-
   type
     TOrderProduct = class
       code                : PChar;
@@ -119,9 +118,7 @@ uses
       Destructor Destroy;
   end;
 
-
   //BILL
-
   type
     TBillItem = class
       total               : Double;
@@ -144,7 +141,6 @@ uses
   end;
 
   //EVENT
-
   type
     TEventTheCheck = class
       table               : PChar;
@@ -194,7 +190,6 @@ uses
       Destructor Destroy;
   end;
 
-
   //PRODUCT
   type
     TProduct = class
@@ -226,9 +221,7 @@ uses
       Destructor Destroy;
   end;
 
-
-
- //TABLE
+  //TABLE
   type
     TTable = class
       code                : Integer;
@@ -257,8 +250,6 @@ uses
       constructor Create;
       Destructor Destroy;
   end;
-
-
 
   //CARD
   type
@@ -320,8 +311,6 @@ uses
       Destructor Destroy;
   end;
 
-
-
   //ITEM
   type
     TITemResult = class
@@ -331,7 +320,6 @@ uses
       data                : TOrderItem;
       count               : Integer;
   end;
-
 
 
   function createProduct(param: TRequestParam; product: TProduct): TProductResult; stdcall; external 'abrahaoapi.dll';
@@ -346,7 +334,7 @@ uses
   function transferTable(param: TRequestParam; code: Integer; codeNew: Integer ):  TSimpleResult;stdcall; external 'abrahaoapi.dll';
   function cancelTable(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
   function reopenTable(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
-  function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderProduct): TItemResult;stdcall; external 'abrahaoapi.dll';
+  function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderItem): TItemResult;stdcall; external 'abrahaoapi.dll';
   function updateTableItem(param: TRequestParam; codeTable: Integer; idItem: String; quantity: Integer; price: Double ): TItemResult;stdcall external 'abrahaoapi.dll';
   function transferTableItem(param: TRequestParam; codeTable: Integer; codeTableNew: Integer; idItem: String): TItemResult;stdcall; external 'abrahaoapi.dll';
   function transferTableItemQtd(param: TRequestParam; codeTable: Integer; codeTableNew: Integer; idItem: String; quantity: Integer): TItemResult;stdcall; external 'abrahaoapi.dll';
@@ -357,7 +345,7 @@ uses
   function transferCard(param: TRequestParam; code: Integer; codeNew: Integer ): TSimpleResult;stdcall; external 'abrahaoapi.dll';
   function cancelCard(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
   function reopenCard(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
-  function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderProduct): TItemResult;stdcall; external 'abrahaoapi.dll';
+  function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderItem): TItemResult;stdcall; external 'abrahaoapi.dll';
   function updateCardItem(param: TRequestParam; codeCard: Integer; idItem: String; quantity: Integer; price: Double ): TItemResult;stdcall; external 'abrahaoapi.dll';
   function transferCardItem(param: TRequestParam; codeCard: Integer; codeCardNew: Integer; idItem: String): TItemResult;stdcall; external 'abrahaoapi.dll';
   function transferCardItemQtd(param: TRequestParam; codeCard: Integer; codeCardNew: Integer; idItem: String; quantity: Integer): TItemResult;stdcall; external 'abrahaoapi.dll';
@@ -474,7 +462,6 @@ implementation
   end;
 
   //BILL
-
    Constructor TBillResult.Create;
   begin
     data := TBillItem.Create;
@@ -496,7 +483,6 @@ implementation
   end;
 
   //EVENT
-
   Constructor TEventResult.Create;
   begin
     data := TListEvent.Create;
@@ -560,10 +546,6 @@ implementation
     Result := inherited Add(AObject);
   end;
 
-
-
-
-
   //TABLE
   Constructor TTableResult.Create;
   begin
@@ -590,10 +572,6 @@ implementation
   begin
     Result := inherited Add(AObject);
   end;
-
-
-
-
 
   //CARD
   Constructor TCardResult.Create;
@@ -622,13 +600,7 @@ implementation
     Result := inherited Add(AObject);
   end;
 
-
-
-
-
-   //USER
-
-
+  //USER
   Constructor TUserResult.Create;
   begin
     data := TListUser.Create;
@@ -654,7 +626,5 @@ implementation
   begin
     Result := inherited Add(AObject);
   end;
-
-
 
 end.
