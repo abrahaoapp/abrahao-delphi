@@ -26,11 +26,33 @@ uses
 
   //ORDER
   type
-    TOrderProduct = class
+    TOrderProductOption = class
       code                : PChar;
       name                : PChar;
       quantity            : Integer;
       price               : Double;
+  end;
+
+  type
+    TListOrderProductOption = Class( TObjectList )
+      private
+        function GetItems(Index: Integer): TOrderProductOption;
+        procedure SetItems(Index: Integer; const Value: TOrderProductOption);
+      public
+        function Add(AObject: TOrderProductOption): Integer;
+        property Items[Index: Integer]: TOrderProductOption read GetItems write SetItems; default;
+  End;
+
+  type
+    TOrderProduct = class
+      code                : PChar;
+      name                : PChar;
+      quantity            : Double;
+      price               : Double;
+      options             : TListOrderProductOption;
+
+      constructor Create;
+      Destructor Destroy;
   end;
 
   type
@@ -334,7 +356,7 @@ uses
   function transferTable(param: TRequestParam; code: Integer; codeNew: Integer ):  TSimpleResult;stdcall; external 'abrahaoapi.dll';
   function cancelTable(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
   function reopenTable(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
-  function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderItem): TItemResult;stdcall; external 'abrahaoapi.dll';
+  function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderProduct): TItemResult;stdcall; external 'abrahaoapi.dll';
   function updateTableItem(param: TRequestParam; codeTable: Integer; idItem: String; quantity: Integer; price: Double ): TItemResult;stdcall external 'abrahaoapi.dll';
   function transferTableItem(param: TRequestParam; codeTable: Integer; codeTableNew: Integer; idItem: String): TItemResult;stdcall; external 'abrahaoapi.dll';
   function transferTableItemQtd(param: TRequestParam; codeTable: Integer; codeTableNew: Integer; idItem: String; quantity: Integer): TItemResult;stdcall; external 'abrahaoapi.dll';
@@ -345,7 +367,7 @@ uses
   function transferCard(param: TRequestParam; code: Integer; codeNew: Integer ): TSimpleResult;stdcall; external 'abrahaoapi.dll';
   function cancelCard(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
   function reopenCard(param: TRequestParam; code: Integer ): TSimpleResult; stdcall; external 'abrahaoapi.dll';
-  function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderItem): TItemResult;stdcall; external 'abrahaoapi.dll';
+  function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderProduct): TItemResult;stdcall; external 'abrahaoapi.dll';
   function updateCardItem(param: TRequestParam; codeCard: Integer; idItem: String; quantity: Integer; price: Double ): TItemResult;stdcall; external 'abrahaoapi.dll';
   function transferCardItem(param: TRequestParam; codeCard: Integer; codeCardNew: Integer; idItem: String): TItemResult;stdcall; external 'abrahaoapi.dll';
   function transferCardItemQtd(param: TRequestParam; codeCard: Integer; codeCardNew: Integer; idItem: String; quantity: Integer): TItemResult;stdcall; external 'abrahaoapi.dll';
@@ -370,6 +392,31 @@ uses
 
 
 implementation
+  Constructor TOrderProduct.Create;
+  begin
+    options := TListOrderProductOption.Create;
+  end;
+
+  Destructor TOrderProduct.Destroy;
+  begin
+    FreeAndNil(options);
+  end;
+
+  function TListOrderProductOption.GetItems(Index: Integer): TOrderProductOption;
+  begin
+    Result := TOrderProductOption(inherited Items[Index]);
+  end;
+
+  procedure TListOrderProductOption.SetItems(Index: Integer;
+  const Value: TOrderProductOption);
+  begin
+    inherited Items[Index] := Value;
+  end;
+
+  function TListOrderProductOption.Add(AObject: TOrderProductOption): Integer;
+  begin
+    Result := inherited Add(AObject);
+  end;
 
   Constructor TOrderItemOption.Create;
   begin

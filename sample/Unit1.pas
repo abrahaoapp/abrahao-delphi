@@ -282,6 +282,7 @@ begin
     begin
       order := orderResult.data.Items[x];
       memo1.Lines.Add(order.id);
+      memo1.Lines.Add(order.waiter);
       memo1.Lines.Add(IntToStr(order.table));
       memo1.Lines.Add(IntToStr(order.card));
       for y := 0 to order.items.Count - 1 do
@@ -878,17 +879,17 @@ end;
 procedure TForm1.btnCreateTableItemClick(Sender: TObject);
 var
   itemResult : TItemResult;
-  product : TOrderItem;
-  productOption: TOrderItemOption;
+  product : TOrderProduct;
+  productOption: TOrderProductOption;
   item: TOrderItem;
 begin
-  product := TOrderItem.Create;
+  product := TOrderProduct.Create;
   product.code := '1062';
   product.name := 'Hambuguer';
   product.price := 33.50;
-  product.quantity := 1;
+  product.quantity := 1.10;
 
-  productOption := TOrderItemOption.Create;
+  productOption := TOrderProductOption.Create;
   productOption.code := '1063';
   productOption.name := 'Adicional de bacon';
   productOption.price := 9.99;
@@ -983,17 +984,17 @@ end;
 procedure TForm1.btnCreateCardItemClick(Sender: TObject);
 var
   itemResult : TItemResult;
-  product : TOrderItem;
-  productOption: TOrderItemOption;
+  product : TOrderProduct;
+  productOption: TOrderProductOption;
   item: TOrderItem;
 begin
-  product := TOrderItem.Create;
+  product := TOrderProduct.Create;
   product.code := '1062';
   product.name := 'Hambuguer';
   product.price := 33.50;
   product.quantity := 1;
 
-  productOption := TOrderItemOption.Create;
+  productOption := TOrderProductOption.Create;
   productOption.code := '1063';
   productOption.name := 'Adicional de bacon';
   productOption.price := 9.99;

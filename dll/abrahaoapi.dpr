@@ -38,11 +38,33 @@ uses
 
   //ORDER
   type
-    TOrderProduct = class
+    TOrderProductOption = class
       code                : PChar;
       name                : PChar;
       quantity            : Integer;
       price               : Double;
+  end;
+
+  type
+    TListOrderProductOption = Class( TObjectList )
+      private
+        function GetItems(Index: Integer): TOrderProductOption;
+        procedure SetItems(Index: Integer; const Value: TOrderProductOption);
+      public
+        function Add(AObject: TOrderProductOption): Integer;
+        property Items[Index: Integer]: TOrderProductOption read GetItems write SetItems; default;
+  End;
+
+  type
+    TOrderProduct = class
+      code                : PChar;
+      name                : PChar;
+      quantity            : Double;
+      price               : Double;
+      options             : TListOrderProductOption;
+
+      constructor Create;
+      Destructor Destroy;
   end;
 
   type
@@ -128,6 +150,32 @@ uses
 
       constructor Create;
       Destructor Destroy;
+  end;
+
+  Constructor TOrderProduct.Create;
+  begin
+    options := TListOrderProductOption.Create;
+  end;
+
+  Destructor TOrderProduct.Destroy;
+  begin
+    FreeAndNil(options);
+  end;
+
+  function TListOrderProductOption.GetItems(Index: Integer): TOrderProductOption;
+  begin
+    Result := TOrderProductOption(inherited Items[Index]);
+  end;
+
+  procedure TListOrderProductOption.SetItems(Index: Integer;
+  const Value: TOrderProductOption);
+  begin
+    inherited Items[Index] := Value;
+  end;
+
+  function TListOrderProductOption.Add(AObject: TOrderProductOption): Integer;
+  begin
+    Result := inherited Add(AObject);
   end;
 
   Constructor TOrderItemOption.Create;
@@ -816,6 +864,7 @@ begin
       order := TOrder.Create;
       order.id := PChar(jsonObj.getJSONArray('data').getJSONObject(x).getString('id'));
       order.date := PChar(jsonObj.getJSONArray('data').getJSONObject(x).getString('date'));
+      order.waiter := PChar(jsonObj.getJSONArray('data').getJSONObject(x).getString('waiter'));
       order.table := jsonObj.getJSONArray('data').getJSONObject(x).getInt('table');
       if (jsonObj.getJSONArray('data').getJSONObject(x).has('card')) then
         if (jsonObj.getJSONArray('data').getJSONObject(x).isNull('card') = false) then
@@ -1027,7 +1076,7 @@ begin
   Result := simpleResult;
 end;
 
-function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderItem): TItemResult;stdcall;
+function createTableItem(param: TRequestParam; codeTable: Integer; product: TOrderProduct): TItemResult;stdcall;
 var
   itemResult: TItemResult;
   jsonObj, jsonOptionObj: TJSONObject;
@@ -1492,7 +1541,7 @@ begin
   Result := simpleResult;
 end;
 
-function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderItem): TItemResult;stdcall;
+function createCardItem(param: TRequestParam; codeCard: Integer; product: TOrderProduct): TItemResult;stdcall;
 var
   itemResult: TItemResult;
   jsonObj, jsonOptionObj: TJSONObject;
