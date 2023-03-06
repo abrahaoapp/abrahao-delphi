@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 184
   Width = 1385
   Height = 702
-  Caption = 'Abrah'#227'o Demo DLL 3.0.1'
+  Caption = 'Abrah'#227'o Demo DLL 3.0.2'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

@@ -887,7 +887,7 @@ begin
   product.code := '1062';
   product.name := 'Hambuguer';
   product.price := 33.50;
-  product.quantity := 1.10;
+  product.quantity := 1;
 
   productOption := TOrderProductOption.Create;
   productOption.code := '1063';
